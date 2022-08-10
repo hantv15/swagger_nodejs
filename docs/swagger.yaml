@@ -1,0 +1,315 @@
+swagger: "2.0"
+info:
+  description: "Đầy là tài liệu mô tả api hệ thống CMS SYS-CODE của BrainCare."
+  version: "1.0.0"
+  title: "Swagger SYS-CODE"
+  contact:
+    email: "braincare.hotro@braincare.com"
+  license:
+    name: "Nginx"
+host: "localhost:8888"
+basePath: "/server"
+tags:
+  - name: "users"
+    description: "Mô tả về api tương tác với bảng users"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+  - name: "store_codes"
+    description: "Mô tả về api tương tác với bảng store_codes"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+  - name: "services"
+    description: "Mô tả về api tương tác với bảng services"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+  - name: "service_price"
+    description: "Mô tả về api tương tác với bảng service_price"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+  - name: "message_logs"
+    description: "Mô tả về api tương tác với bảng message_logs"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+  - name: "managers"
+    description: "Mô tả về api tương tác với bảng managers"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+  - name: "code_uses"
+    description: "Mô tả về api tương tác với bảng code_uses"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+  - name: "authentication"
+    description: "Đăng nhập, đăng xuất"
+    externalDocs:
+      description: "Tìm hiểu thêm tại"
+      url: "https://braincare.vn"
+schemes:
+  - "http"
+  - "https"
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+paths:
+  /user/GetUsers:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - "users"
+      summary: "Đăng nhập, xác thực thông tin người dùng"
+      description: ""
+      operationId: "authenId"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "query"
+          name: "range"
+          default: "[0, 9]"
+        - in: "query"
+          name: "filter{search}"
+          default: ""
+        - in: "query"
+          name: "sort"
+          default: '["status", "desc"]'
+      responses:
+        "200":
+          description: "successful operation"
+        "400":
+          description: "Invalid status value"
+  /user/GetUser/{id}:
+    get:
+      security:
+        - Bearer: []
+      tags:
+      - "users"
+      summary: "Tìm kiếm user theo id"
+      description: ""
+      operationId: "findUserId"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "id"
+          in: "path"
+          description:  
+      
+  /authenticate/signin:
+    post:
+      security:
+        - Bearer: []
+      tags:
+        - "authentication"
+      summary: "Xác thực thông tin đối tác"
+      description: ""
+      operationId: "Login User"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "body"
+          in: "body"
+          description: "Xác thực người dùng khi đăng nhâp vào hệ thống"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              PartnerCode:
+                type: "string"
+                default: "005"
+              PartnerKey:
+                type: "string"
+                default: "abc"
+      responses:
+        "200":
+          description: "successful operation"
+          schema:
+            type: "string"
+          headers:
+            X-Rate-Limit:
+              type: "integer"
+              format: "int32"
+              description: "calls per hour allowed by the user"
+            X-Expires-After:
+              type: "string"
+              format: "date-time"
+              description: "date in UTC when token expires"
+        "400":
+          description: "Invalid username/password supplied"
+
+definitions:
+  users:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "Mã tự tăng"
+      partner_name:
+        type: "string"
+        description: "Tên đối tác"
+      partner_code:
+        type: "string"
+        default: "005"
+        description: "Mã đối tác"
+      partner_key:
+        type: "string"
+        default: "abc"
+        description: "Key đối tác"
+      status:
+        type: "boolean"
+        default: 1
+        description: "Trạng thái hoạt động: 1-hoạt động, 2-tài khoản bị khoá"
+      create_at:
+        type: "string"
+        format: "date"
+        description: "Thời gian tài khoản được tạo"
+      update_at:
+        type: "string"
+        format: "date-time"
+        description: "Thời gian cuối cùng khi update thông tin tài khoản"
+  store_codes:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "Mã tự tăng"
+      code:
+        type: "string"
+        description: "Mã voucher"
+      code_type:
+        type: "string"
+        description: "Loại mã voucher (đi cùng với dịch vụ mô tả trong tài liệu API từ 101-111))"
+      price:
+        type: "integer"
+        default: 0
+        description: "Mệnh giá dịch vụ"
+      amt:
+        type: "integer"
+        default: 0
+        description: "Số tiền bán ra"
+      status:
+        type: "integer"
+        default: 1
+        description: "1-Active, 0-Block"
+      create_at:
+        type: "string"
+        format: "date-time"
+        description: "Ngày tạo voucher"
+  services:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "Mã tự tăng"
+      code_type:
+        type: "string"
+        description: "Loại mã voucher (đi cùng với dịch vụ mô tả trong tài liệu API tù 101-111)"
+      desc:
+        type: "string"
+        description: "Mô tả loại mã voucher"
+  services_price:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "Mã tự tăng"
+      code_type:
+        type: "string"
+        description: "Loại mã voucher được lấy theo bảng service (mã dịch vụ mô tả trong tài liệu API từ 101-111)"
+      price:
+        type: "integer"
+        description: "Mệnh giá của voucher"
+      code_price:
+        type: "string"
+        description: "Mã code (code_type + giá)"
+  message_logs:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "Mã tự tăng"
+      partner_code:
+        type: "string"
+        description: "Mã đối tác"
+      msg_in:
+        type: "sring"
+        description: "Message đối tác gửi lên"
+      msg_out:
+        type: "string"
+        description: "Message trả lại cho đối tác"
+      voucher_out:
+        type: "string"
+        description: "Các mã voucher được trả về khi đối tác lấy thành công"
+      ip_address:
+        type: "string"
+        description: "Địa chỉ ip của máy đối tác khi truy cập đến hệ thống"
+      cate_message:
+        type: "string"
+        description: "Phân lại Message trả về A-Active(khách hàng đã sử dụng Voucher), B-Block, W-Waiting(Khách hàng đã mua voucher nhưng chưa sử dụng), P-Paid(Đã thanh toán với đối tác), G- Get( Khách hàng đã Nhận Voucher)"
+      trans_date:
+        type: "string"
+        format: "date"
+        description: "Ngày giao dịch"
+  managers:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "Mã tự tắng"
+      name:
+        type: "string"
+        description: "Tên của người quản lý"
+      user_name:
+        type: "string"
+        description: "Tên đăng nhập"
+      password:
+        type: "string"
+        description: "Mật khẩu"
+      role:
+        type: "integer"
+        description: "Vai trò"
+      status:
+        type: "integer"
+        default: 1
+        description: "1-Active, 2-Block"
+  code_uses:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        description: "Mã tự tăng"
+      code:
+        type: "string"
+        description: "Mã voucher"
+      partner_code:
+        type: "string"
+        description: "Mã đối tác"
+      code_type:
+        type: "string"
+        description: "Loại mã voucher được lấy theo bảng service (mã dịch vụ mô tả trong tài liệu API từ 101-111)"
+      price:
+        type: "integer"
+        description: "Mệnh giá dịch vụ"
+      amt:
+        type: "integer"
+        description: "Số tiền bán ra"
+      create_at:
+        type: "string"
+        format: "date-time"
+        description: "Ngày đối tác lấy voucher"
+      update_at:
+        type: "string"
+        format: "date-time"
+        description: "Ngày cập nhật trạng thái cuối cùng"
+      paid:
+        type: "integer"
+        default: 0
+        description: "chưa rõ mô tả"
